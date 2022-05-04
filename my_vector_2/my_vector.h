@@ -55,6 +55,9 @@ public: //capacity
 	void assign() {
 
 	}
+	size_t capacity() const { return capacity_; }
+	size_t size() const { return size_; }
+	bool empty() const { return !size; }
 };
 
 }
