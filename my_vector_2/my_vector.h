@@ -39,25 +39,90 @@ public:
 	~Vector() = default;
 
 public: //element access
-	T& operator[](size_t pos) { return data_[pos]; }
-	const T& operator[](size_t pos) const { return data_[pos]; }
+	T& operator[](size_t pos) {
+		return data_[pos];
+	}
+	const T& operator[](size_t pos) const {
+		return data_[pos];
+	}
 
-	T& front() { return data_[0]; }
-	const T& front() const { return data_[0]; }
+	T& front() {
+		return data_[0];
+	}
+	const T& front() const {
+		return data_[0];
+	}
 
-	T& back() { return data_[size_ - 1]; }
-	const T& back() const { return data_[size_ - 1]; }
+	T& back() {
+		return data_[size_ - 1];
+	}
+	const T& back() const {
+		return data_[size_ - 1];
+	}
 
-	T* data() { return data_; }
-	const T* data() const { return data_; }
+	T* data() {
+		return data_;
+	}
+	const T* data() const {
+		return data_;
+	}
 
 public: //capacity
 	void assign() {
 
 	}
-	size_t capacity() const { return capacity_; }
-	size_t size() const { return size_; }
-	bool empty() const { return !size; }
+	size_t capacity() const {
+		return capacity_;
+	}
+	size_t size() const {
+		return size_;
+	}
+	bool empty() const {
+		return !size;
+	}
+
+public:
+	class iterator {
+		T* ptr_;
+
+		iterator(T* ptr) : ptr_(ptr) {}
+
+	public:
+		using iterator_category = std::random_access_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = *T;
+		using reference = &T;
+
+		iterator(const iterator& other) = default;
+		iterator& iterator(const iterator& other) = default;
+
+	public:
+		T& operator*() const {
+			return *ptr_;
+		}
+		iterator& operator++() {
+			++ptr_;
+			return *this;
+		}
+		iterator operator++(int) {
+			iterator old{ *this };
+			++(*this);
+			return old;
+		}
+		iterator& operator--() {
+			--ptr_;
+			return *this;
+		}
+		iterator operator--(int) {
+			iterator old{ *this };
+			--(*this);
+			return old;
+		}
+		iterator& operator[](size_t pos) {
+
+		}
+	};
 };
 
 }
