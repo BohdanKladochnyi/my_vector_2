@@ -105,7 +105,7 @@ public: //modifiers
 		size_ = 0;
 	}
 	void push_back(const T& value) {
-		if (!size_) reserve(8);
+		if (!capacity_) reserve(8);
 		if (size_ >= capacity_) reserve(capacity_ * 2);
 		data_[size_] = value;
 		++size_;
