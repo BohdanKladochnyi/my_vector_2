@@ -68,9 +68,6 @@ public: //element access
 	}
 
 public: //capacity
-	void assign() {
-
-	}
 	size_t capacity() const {
 		return capacity_;
 	}
@@ -117,6 +114,20 @@ public: //modifiers
 	}
 
 public:
+	bool equal(const Vector& other) {
+		if (this == &other) return true;
+		if (size_ != other.size_) return false;
+		for (size_t i = 0; i != size_; ++i)
+			if (data_[i] != other.data_[i]) return false;
+		return true;
+	}
+	bool less(const Vector& other) {
+		if (equal(*other)) return false;
+		for (size_t i = 0; i != size_; ++i)
+			if (data_[i] > other.data_[i]) return false;
+		return size_ < other.size_;
+	}
+
 	class iterator {
 		T* ptr_;
 
