@@ -99,7 +99,9 @@ public: //capacity
 
 public: //modifiers
 	void assign(size_t count, const T& value) {
-
+		if (count > capacity_) reserve(count);
+		for (size_t i = 0; i != count; ++i)
+			data_[i] = value;
 	}
 	void clear() {
 		size_ = 0;
