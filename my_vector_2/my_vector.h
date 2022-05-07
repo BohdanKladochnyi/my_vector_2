@@ -80,6 +80,36 @@ public: //capacity
 	bool empty() const {
 		return !size;
 	}
+	void reserve(size_t count) {
+		if (capacity_ > count || !count) return;
+		T* tmp_buf = new T[count];
+		std::copy(data_, data_ + size_, tmp_buf);
+		delete[] data_;
+		capacity_ = count;
+		data_ = tmp_buf;
+	}
+	void shrink_to_fit() {
+		if (size_ == capacity_) return;
+		T* tmp_buf = new T[size_];
+		std::copy(data_, data_ + size_, tmp_buf);
+		delete[] data_;
+		capacity_ = size_;
+		data_ = tmp_buf;
+	}
+
+public: //modifiers
+	void assign(size_t count, const T& value) {
+
+	}
+	void clear() {
+		size_ = 0;
+	}
+	void push_back(const T& value) {
+
+	}
+	void pop_back() {
+		--size_;
+	}
 
 public:
 	class iterator {
