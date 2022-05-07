@@ -105,7 +105,7 @@ public: //modifiers
 		size_ = 0;
 	}
 	void push_back(const T& value) {
-		if (!capacity_) reserve(8);
+		if (capacity_ < 4) reserve(4);
 		if (size_ >= capacity_) reserve(capacity_ * 2);
 		data_[size_] = value;
 		++size_;
@@ -124,11 +124,11 @@ public:
 		using iterator_category = std::random_access_iterator_tag;
 		using value_type = T;
 		using difference_type = std::ptrdiff_t;
-		using pointer = *T;
-		using reference = &T;
+		using pointer = T*;
+		using reference = T&;
 
 		iterator(const iterator& other) = default;
-		iterator& iterator(const iterator& other) = default;
+		iterator& operator=(const iterator& other) = default;
 
 	public:
 		T& operator*() const {

@@ -10,6 +10,15 @@ int main()
 	v3[5] = 42;
 	std::cout << v3[5] << '\n';
 
-	containers::Vector<float> v4;
-	v4.reserve(12);
+	containers::Vector<int> v4;
+	v4.reserve(2);
+	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
+	for (size_t i = 0; i != 10; ++i)
+		v4.push_back(i);
+	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
+	for (size_t i = 0; i != 8; ++i)
+		std::cout << v4[i] << ' ';
+	std::cout << '\n';
+	v4.shrink_to_fit();
+	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
 }
