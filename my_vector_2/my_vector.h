@@ -36,6 +36,10 @@ public:
 	Vector(const Vector& other) = default;
 	Vector& operator=(const Vector& other) = default;
 	Vector(size_t count) : Buffer<T>(count) {}
+	Vector(std::initializer_list<T> il) : Buffer<T>(il.size()) {
+		size_ = il.size();
+		std::copy(il.begin(), il.end(), data_);
+	}
 	~Vector() = default;
 
 public: //element access
