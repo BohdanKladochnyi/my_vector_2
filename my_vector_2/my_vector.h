@@ -171,4 +171,25 @@ public:
 	};
 };
 
+
+template<typename T>
+bool operator!=(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return !(rhs.equal(lhs));
+}
+template<typename T>
+bool operator==(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return rhs.equal(lhs);
+}
+template<typename T>
+bool operator<(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return rhs.less(lhs);
+}
+template<typename T>
+bool operator>(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return !(rhs.less(lhs));
+}
 }
