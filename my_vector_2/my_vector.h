@@ -190,6 +190,16 @@ bool operator<(const Vector<T>& rhs, const Vector<T>& lhs)
 template<typename T>
 bool operator>(const Vector<T>& rhs, const Vector<T>& lhs)
 {
-	return !(rhs.less(lhs));
+	return !(rhs.less(lhs)) && !(rhs.equal(lhs));
+}
+template<typename T>
+bool operator<=(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return !(rhs > lhs);
+}
+template<typename T>
+bool operator>=(const Vector<T>& rhs, const Vector<T>& lhs)
+{
+	return !(rhs < lhs);
 }
 }
