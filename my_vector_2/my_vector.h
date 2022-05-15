@@ -118,18 +118,20 @@ public: //modifiers
 	}
 
 public:
-	bool equal(const Vector& other) {
+	bool equal(const Vector& other) const {
 		if (this == &other) return true;
 		if (size_ != other.size_) return false;
-		for (size_t i = 0; i != size_; ++i)
+		size_t count = size_ < other.size_ ? size_ : other.size_;
+		for (size_t i = 0; i != count; ++i)
 			if (data_[i] != other.data_[i]) return false;
 		return true;
 	}
-	bool less(const Vector& other) {
-		if (equal(*other)) return false;
-		for (size_t i = 0; i != size_; ++i)
+	bool less(const Vector& other) const {
+		if (equal(other)) return false;
+		size_t count = size_ < other.size_ ? size_ : other.size_;
+		for (size_t i = 0; i != count; ++i)
 			if (data_[i] > other.data_[i]) return false;
-		return size_ < other.size_;
+		return true;
 	}
 
 	class iterator {
@@ -177,33 +179,33 @@ public:
 
 
 template<typename T>
-bool operator!=(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return !(rhs.equal(lhs));
+	return !(lhs.equal(rhs));
 }
 template<typename T>
-bool operator==(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator==(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return rhs.equal(lhs);
+	return lhs.equal(rhs);
 }
 template<typename T>
-bool operator<(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator<(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return rhs.less(lhs);
+	return lhs.less(rhs);
 }
 template<typename T>
-bool operator>(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator>(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return !(rhs.less(lhs)) && !(rhs.equal(lhs));
+	return !(lhs.less(rhs)) && !(lhs.equal(rhs));
 }
 template<typename T>
-bool operator<=(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator<=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return !(rhs > lhs);
+	return !(lhs > rhs);
 }
 template<typename T>
-bool operator>=(const Vector<T>& rhs, const Vector<T>& lhs)
+bool operator>=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-	return !(rhs < lhs);
+	return !(lhs < rhs);
 }
 }
