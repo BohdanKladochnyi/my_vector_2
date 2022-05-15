@@ -176,6 +176,16 @@ public:
 		T& operator[](size_t pos) {
 			return ptr_[pos];
 		}
+		iterator& operator+=(size_t count) {
+			ptr_ += count;
+			return *this;
+		}
+		iterator& operator-=(size_t count) {
+			ptr_ -= count;
+			return *this;
+		}
+
+		auto operator<=>(const iterator&) const = default;
 	};
 
 	iterator begin() const {
@@ -192,29 +202,64 @@ bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return !(lhs.equal(rhs));
 }
+
 template<typename T>
 bool operator==(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return lhs.equal(rhs);
 }
+
 template<typename T>
 bool operator<(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return lhs.less(rhs);
 }
+
 template<typename T>
 bool operator>(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return !(lhs.less(rhs)) && !(lhs.equal(rhs));
 }
+
 template<typename T>
 bool operator<=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return !(lhs > rhs);
 }
+
 template<typename T>
 bool operator>=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
 	return !(lhs < rhs);
 }
+
+
+template<typename T>
+typename Vector<T>::iterator operator+(
+	const typename Vector<T>::iterator& it,
+	size_t count)
+{
+	Vector<T>::iterator copy = it;
+	copy += count;
+	return copy;
+}
+
+template<typename T>
+typename Vector<T>::iterator operator-(
+	const typename Vector<T>::iterator& it,
+	size_t count)
+{
+	Vector<T>::iterator copy = it;
+	copy -= count;
+	return copy;
+}
+
+template<typename T>
+std::ptrdiff_t operator-(
+	const typename Vector<T>::iterator& lhs,
+	const typename Vector<T>::iterator& rhs)
+{
+	return ;
+}
+
 }
