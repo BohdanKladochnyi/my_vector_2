@@ -23,11 +23,15 @@ int main()
 	v4.shrink_to_fit();
 	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
 
-	v4.assign(20, 42);
-	for (size_t i = 0; i != v4.size(); ++i)
-		std::cout << v4[i] << ' ';
+	containers::Vector<int> v5;
+	v5.reserve(20);
+	v5.assign(10, 42);
+	v5[5] = 10;
+	for (size_t i = 0; i != v5.size(); ++i)
+		std::cout << v5[i] << ' ';
 	std::cout << '\n';
-
+	auto v5_it = v5.begin();
+	std::cout << v5_it[5] << '\n';
 
 	{
 		containers::Vector<int> v1 = { 1, 2, 3, 4, 5 };

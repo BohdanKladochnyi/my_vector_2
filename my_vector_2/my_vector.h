@@ -100,10 +100,8 @@ public: //capacity
 
 public: //modifiers
 	void assign(size_t count, const T& value) {
-		if (count > capacity_) {
-			reserve(count);
-			size_ = count;
-		}
+		if (count > capacity_) reserve(count);
+		size_ = size_ > count ? size_ : count;
 		for (size_t i = 0; i != count; ++i)
 			data_[i] = value;
 	}
@@ -137,10 +135,11 @@ public:
 		return true;
 	}
 
-	class iterator {
+	class iterator final {
+		friend Vector;
 		T* ptr_;
 
-		iterator(T* ptr) : ptr_(ptr) {}
+		iterator(T* ptr) noexcept : ptr_(ptr) {}
 
 	public:
 		using iterator_category = std::random_access_iterator_tag;
@@ -162,7 +161,7 @@ public:
 		}
 		iterator operator++(int) {
 			iterator old{ *this };
-			++(*this);
+			++ptr_;
 			return old;
 		}
 		iterator& operator--() {
@@ -171,13 +170,20 @@ public:
 		}
 		iterator operator--(int) {
 			iterator old{ *this };
-			--(*this);
+			--ptr_;
 			return old;
 		}
-		iterator& operator[](size_t pos) {
-
+		T& operator[](size_t pos) {
+			return ptr_[pos];
 		}
 	};
+
+	iterator begin() const {
+		return data_;
+	}
+	iterator end() const {
+		return data_ + size_;
+	}
 };
 
 
