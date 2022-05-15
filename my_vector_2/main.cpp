@@ -17,11 +17,17 @@ int main()
 	for (int i = 0; i != 10; ++i)
 		v4.push_back(i);
 	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
-	for (size_t i = 0; i != 8; ++i)
+	for (size_t i = 0; i != v4.size(); ++i)
 		std::cout << v4[i] << ' ';
 	std::cout << '\n';
 	v4.shrink_to_fit();
 	std::cout << v4.size() << ' ' << v4.capacity() << '\n';
+
+	v4.assign(20, 42);
+	for (size_t i = 0; i != v4.size(); ++i)
+		std::cout << v4[i] << ' ';
+	std::cout << '\n';
+
 
 	{
 		containers::Vector<int> v1 = { 1, 2, 3, 4, 5 };
@@ -41,4 +47,6 @@ int main()
 		assert(v3 >= v1);
 		std::cout << "PASS" << std::endl;
 	}
+
+	
 }
