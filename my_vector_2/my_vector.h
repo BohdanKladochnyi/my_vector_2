@@ -152,7 +152,10 @@ public:
 		iterator& operator=(const iterator& other) = default;
 
 	public:
-		T& operator*() const {
+		T& operator*() {
+			return *ptr_;
+		}
+		const T& operator*() const {
 			return *ptr_;
 		}
 		iterator& operator++() {
@@ -174,6 +177,9 @@ public:
 			return old;
 		}
 		T& operator[](size_t pos) {
+			return ptr_[pos];
+		}
+		const T& operator[](size_t pos) const {
 			return ptr_[pos];
 		}
 		iterator& operator+=(size_t count) {
@@ -239,7 +245,7 @@ typename Vector<T>::iterator operator+(
 	const typename Vector<T>::iterator& it,
 	size_t count)
 {
-	Vector<T>::iterator copy = it;
+	typename Vector<T>::iterator copy = it;
 	copy += count;
 	return copy;
 }
@@ -249,7 +255,7 @@ typename Vector<T>::iterator operator-(
 	const typename Vector<T>::iterator& it,
 	size_t count)
 {
-	Vector<T>::iterator copy = it;
+	typename Vector<T>::iterator copy = it;
 	copy -= count;
 	return copy;
 }

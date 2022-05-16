@@ -30,8 +30,9 @@ int main()
 	for (size_t i = 0; i != v5.size(); ++i)
 		std::cout << v5[i] << ' ';
 	std::cout << '\n';
-	auto v5_it = v5.begin();
-	std::cout << v5_it[5] << '\n';
+	containers::Vector<int>::iterator v5_it = v5.begin();
+	v5_it = v5_it + 1;
+	std::cout << v5_it[4] << '\n';
 
 	{
 		containers::Vector<int> v1 = { 1, 2, 3, 4, 5 };
