@@ -205,6 +205,10 @@ public:
 	}
 
 	auto operator<=>(const iterator&) const = default;
+
+	std::ptrdiff_t difference(const iterator& other) const {
+		return ptr_ - other.ptr_;
+	}
 };
 
 template<typename T>
@@ -263,7 +267,7 @@ iterator<T> operator-(const iterator<T>& it, size_t count)
 template<typename T>
 std::ptrdiff_t operator-(const iterator<T>& lhs, const iterator<T>& rhs)
 {
-	return ;
+	return lhs.difference(rhs);
 }
 
 }

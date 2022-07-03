@@ -37,7 +37,8 @@ int main()
 	dump(std::cout, v5);
 	containers::iterator<int> v5_it = v5.begin();
 	std::cout << v5_it[5] << '\n';
-	v5_it = v5_it + 1; //need to fix
+	v5_it = v5_it + 1;
+	auto v5_it2 = v5_it - v5.begin();
 
 	//containers::Vector<int> v6(v5.begin(), v5.end());
 	//dump(std::cout, v6);
