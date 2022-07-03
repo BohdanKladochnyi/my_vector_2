@@ -30,6 +30,7 @@ template<typename T> class Vector final : private Buffer<T> {
 	using Buffer<T>::size_;
 	using Buffer<T>::capacity_;
 	using Buffer<T>::data_;
+	template <typename> class iterator;
 
 public:
 	Vector() = default;
@@ -135,65 +136,11 @@ public:
 		return true;
 	}
 
-	class iterator final {
-		friend Vector;
-		T* ptr_;
-
-		iterator(T* ptr) noexcept : ptr_(ptr) {}
-
-	public:
-		using iterator_category = std::random_access_iterator_tag;
-		using value_type = T;
-		using difference_type = std::ptrdiff_t;
-		using pointer = T*;
-		using reference = T&;
-
-		iterator(const iterator& other) = default;
-		iterator& operator=(const iterator& other) = default;
-
-	public:
-		T& operator*() {
-			return *ptr_;
-		}
-		const T& operator*() const {
-			return *ptr_;
-		}
-		iterator& operator++() {
-			++ptr_;
-			return *this;
-		}
-		iterator operator++(int) {
-			iterator old{ *this };
-			++ptr_;
-			return old;
-		}
-		iterator& operator--() {
-			--ptr_;
-			return *this;
-		}
-		iterator operator--(int) {
-			iterator old{ *this };
-			--ptr_;
-			return old;
-		}
-		T& operator[](size_t pos) {
-			return ptr_[pos];
-		}
-		const T& operator[](size_t pos) const {
-			return ptr_[pos];
-		}
-		iterator& operator+=(size_t count) {
-			ptr_ += count;
-			return *this;
-		}
-		iterator& operator-=(size_t count) {
-			ptr_ -= count;
-			return *this;
-		}
-
-		auto operator<=>(const iterator&) const = default;
-	};
-
+	Vector(const iterator& fst, const iterator& lst) : Buffer<T>(fst - lst) {
+		std::copy(fst, lst, data_);
+		size_ = fst - lst;
+	}
+	
 	iterator begin() const {
 		return data_;
 	}
@@ -202,6 +149,64 @@ public:
 	}
 };
 
+template <typename T> class iterator final {
+	friend Vector;
+	T* ptr_;
+
+	iterator(T* ptr) noexcept : ptr_(ptr) {}
+
+public:
+	using iterator_category = std::random_access_iterator_tag;
+	using value_type = T;
+	using difference_type = std::ptrdiff_t;
+	using pointer = T*;
+	using reference = T&;
+
+	iterator(const iterator& other) = default;
+	iterator& operator=(const iterator& other) = default;
+
+public:
+	T& operator*() {
+		return *ptr_;
+	}
+	const T& operator*() const {
+		return *ptr_;
+	}
+	iterator& operator++() {
+		++ptr_;
+		return *this;
+	}
+	iterator operator++(int) {
+		iterator old{ *this };
+		++ptr_;
+		return old;
+	}
+	iterator& operator--() {
+		--ptr_;
+		return *this;
+	}
+	iterator operator--(int) {
+		iterator old{ *this };
+		--ptr_;
+		return old;
+	}
+	T& operator[](size_t pos) {
+		return ptr_[pos];
+	}
+	const T& operator[](size_t pos) const {
+		return ptr_[pos];
+	}
+	iterator& operator+=(size_t count) {
+		ptr_ += count;
+		return *this;
+	}
+	iterator& operator-=(size_t count) {
+		ptr_ -= count;
+		return *this;
+	}
+
+	auto operator<=>(const iterator&) const = default;
+};
 
 template<typename T>
 bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
@@ -241,29 +246,27 @@ bool operator>=(const Vector<T>& lhs, const Vector<T>& rhs)
 
 
 template<typename T>
-typename Vector<T>::iterator operator+(
-	const typename Vector<T>::iterator& it,
+iterator<T> operator+(
+	const iterator<T>& it,
 	size_t count)
 {
-	typename Vector<T>::iterator copy = it;
+	iterator<T> copy = it;
 	copy += count;
 	return copy;
 }
 
 template<typename T>
-typename Vector<T>::iterator operator-(
-	const typename Vector<T>::iterator& it,
+iterator<T> operator-(
+	const iterator<T>& it,
 	size_t count)
 {
-	typename Vector<T>::iterator copy = it;
+	iterator<T> copy = it;
 	copy -= count;
 	return copy;
 }
 
 template<typename T>
-std::ptrdiff_t operator-(
-	const typename Vector<T>::iterator& lhs,
-	const typename Vector<T>::iterator& rhs)
+std::ptrdiff_t operator-(const iterator<T>& lhs, const iterator<T>& rhs)
 {
 	return ;
 }
