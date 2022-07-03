@@ -26,12 +26,12 @@ protected:
 	~Buffer() { delete[] data_; }
 };
 
+template <typename> class iterator;
+
 template<typename T> class Vector final : private Buffer<T> {
 	using Buffer<T>::size_;
 	using Buffer<T>::capacity_;
 	using Buffer<T>::data_;
-	template <typename> class iterator;
-
 public:
 	Vector() = default;
 	Vector(const Vector& other) = default;
@@ -40,6 +40,10 @@ public:
 	Vector(std::initializer_list<T> il) : Buffer<T>(il.size()) {
 		size_ = il.size();
 		std::copy(il.begin(), il.end(), data_);
+	}
+	Vector(const iterator<T>& fst, const iterator<T>& lst) : Buffer<T>(fst - lst) {
+		std::copy(fst, lst, data_);
+		size_ = fst - lst;
 	}
 	~Vector() = default;
 
@@ -135,22 +139,17 @@ public:
 			if (data_[i] > other.data_[i]) return false;
 		return true;
 	}
-
-	Vector(const iterator& fst, const iterator& lst) : Buffer<T>(fst - lst) {
-		std::copy(fst, lst, data_);
-		size_ = fst - lst;
-	}
 	
-	iterator begin() const {
+	iterator<T> begin() const {
 		return data_;
 	}
-	iterator end() const {
+	iterator<T> end() const {
 		return data_ + size_;
 	}
 };
 
 template <typename T> class iterator final {
-	friend Vector;
+	template <typename> friend class Vector;
 	T* ptr_;
 
 	iterator(T* ptr) noexcept : ptr_(ptr) {}
@@ -246,9 +245,7 @@ bool operator>=(const Vector<T>& lhs, const Vector<T>& rhs)
 
 
 template<typename T>
-iterator<T> operator+(
-	const iterator<T>& it,
-	size_t count)
+iterator<T> operator+(const iterator<T>& it, size_t count)
 {
 	iterator<T> copy = it;
 	copy += count;
@@ -256,9 +253,7 @@ iterator<T> operator+(
 }
 
 template<typename T>
-iterator<T> operator-(
-	const iterator<T>& it,
-	size_t count)
+iterator<T> operator-(const iterator<T>& it, size_t count)
 {
 	iterator<T> copy = it;
 	copy -= count;
