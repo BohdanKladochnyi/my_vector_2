@@ -11,6 +11,15 @@ std::ostream& dump(std::ostream& os, const containers::Vector<T>& v)
 	return os;
 }
 
+struct Buf {
+	int x;
+	Buf(int x_ = 0) : x(x_) { std::cout << "ctor\n"; }
+	Buf(const Buf& rhs) { std::cout << "copy ctor\n"; x = rhs.x; }
+	Buf(Buf&& rhs) noexcept { std::cout << "move ctor\n"; x = rhs.x; }
+	Buf& operator=(const Buf& rhs) { std::cout << "copy assigment\n"; x = rhs.x; return *this; };
+	Buf& operator=(Buf&& rhs) noexcept { std::cout << "move assigment\n"; x = rhs.x; return *this; };
+};
+
 int main()
 {
 	containers::Vector<int> v1;
@@ -64,5 +73,10 @@ int main()
 		std::cout << "PASS" << std::endl;
 	}
 
-	
+	containers::Vector<Buf> v_b{};
+	v_b.reserve(10);
+	std::cout << "push\n";
+	v_b.push_back(10);
+	std::cout << "emplace\n";
+	v_b.emplace_back(10);
 }

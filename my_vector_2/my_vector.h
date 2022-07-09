@@ -119,6 +119,13 @@ public: //modifiers
 		data_[size_] = value;
 		++size_;
 	}
+	template <typename Arg>
+	void emplace_back(Arg&& arg) {
+		if (capacity_ < 4) reserve(4);
+		if (size_ >= capacity_) reserve(capacity_ * 2);
+		new (data_ + size_) T(std::forward<Arg>(arg));
+		++size_;
+	}
 	void pop_back() {
 		--size_;
 	}
