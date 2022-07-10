@@ -126,6 +126,12 @@ public: //modifiers
 		new (data_ + size_) T(std::forward<Arg>(arg));
 		++size_;
 	}
+	iterator insert(iterator<T> pos, const T& value) {
+		ptrdiff_t pos_ = pos - begin();
+		if (pos == end()) push_back(T);
+		else data_[pos_] = value;
+		return data_ + pos_;
+	}
 	void pop_back() {
 		--size_;
 	}
