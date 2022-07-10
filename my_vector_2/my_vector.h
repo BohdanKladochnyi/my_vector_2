@@ -114,10 +114,7 @@ public: //modifiers
 		size_ = 0;
 	}
 	void push_back(const T& value) {
-		if (capacity_ < 4) reserve(4);
-		if (size_ >= capacity_) reserve(capacity_ * 2);
-		data_[size_] = value;
-		++size_;
+		emplace_back(value);
 	}
 	template <typename Arg>
 	void emplace_back(Arg&& arg) {
