@@ -75,10 +75,13 @@ int main()
 	}
 
 	containers::Vector<Buf> v_b{};
-	std::cout << "push\n";
-	v_b.push_back(10);
 	std::cout << "emplace\n";
-	v_b.emplace_back(10);
+	v_b.emplace(v_b.end(), 42);
 	std::cout << "insert\n";
 	v_b.insert(v_b.end(), 42);
+	std::cout << "emplace_back\n";
+	v_b.emplace_back(10);
+	std::cout << "push_back\n";
+	v_b.push_back(10);
+
 }

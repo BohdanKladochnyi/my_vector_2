@@ -124,10 +124,15 @@ public: //modifiers
 		++size_;
 	}
 	iterator<T> insert(iterator<T> pos, const T& value) {
+		return emplace(pos, value);
+	}
+	template <typename Arg>
+	iterator<T> emplace(iterator<T> pos, Arg&& arg) {
 		ptrdiff_t pos_ = pos - begin();
-		if (pos == end()) push_back(value);
-		else data_[pos_] = value;
-		return data_ + pos_;
+		if (pos == end()) emplace_back(std::forward<Arg>(arg));
+		else new (data_ + pos_) T(std::forward<Arg>(arg));
+		return  data_ + pos_;
+
 	}
 	void pop_back() {
 		--size_;
