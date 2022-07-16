@@ -14,6 +14,11 @@ protected:
 		: size_(other.size_), capacity_(other.capacity_), data_(new T[capacity_]) {
 		std::copy(other.data_, other.data_ + capacity_, data_);
 	}
+	Buffer(Buffer&& other) noexcept {
+		std::swap(size_, other.size_);
+		std::swap(capacity_, other.capacity_);
+		std::swap(data_, other.data_);
+	}
 	Buffer& operator=(const Buffer& other) {
 		if (this == &other) return *this;
 		delete[] data_;
@@ -23,6 +28,14 @@ protected:
 		std::copy(other.data_, other.data_ + capacity_, data_);
 		return *this;
 	}
+	Buffer& operator=(Buffer&& other) noexcept {
+		if (this == &other) return *this;
+		std::swap(size_, other.size_);
+		std::swap(capacity_, other.capacity_);
+		std::swap(data_, other.data_);
+		return *this;
+	}
+	
 	~Buffer() { delete[] data_; }
 };
 
@@ -36,7 +49,13 @@ public:
 	Vector() = default;
 	Vector(const Vector& other) = default;
 	Vector& operator=(const Vector& other) = default;
+	Vector(Vector&& other) = default;
+	Vector& operator=(Vector&& other) = default;
+
 	Vector(size_t count) : Buffer<T>(count) {}
+	Vector(size_t count, const T& value) : Buffer<T>(count) {
+		assign(count, value);
+	}
 	Vector(std::initializer_list<T> il) : Buffer<T>(il.size()) {
 		size_ = il.size();
 		std::copy(il.begin(), il.end(), data_);

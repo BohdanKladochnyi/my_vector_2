@@ -84,4 +84,8 @@ int main()
 	std::cout << "push_back\n";
 	v_b.push_back(10);
 
+	containers::Vector v7 = { 1, 2, 3 };
+	containers::Vector v8rm = std::move(v7);
+	v7 = std::move(v8rm);
+	dump(std::cout, v7);
 }
