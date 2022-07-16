@@ -50,8 +50,8 @@ int main()
 	v5_it = v5_it + 1;
 	auto v5_it2 = v5_it - v5.begin();
 
-	//containers::Vector<int> v6(v5.begin(), v5.end());
-	//dump(std::cout, v6);
+	containers::Vector<int> v6(v5.begin(), v5.end());
+	dump(std::cout, v6);
 
 
 

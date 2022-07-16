@@ -56,13 +56,14 @@ public:
 	Vector(size_t count, const T& value) : Buffer<T>(count) {
 		assign(count, value);
 	}
-	Vector(std::initializer_list<T> il) : Buffer<T>(il.size()) {
-		size_ = il.size();
-		std::copy(il.begin(), il.end(), data_);
+	Vector(std::initializer_list<T> init) : Buffer<T>(init.size()) {
+		size_ = init.size();
+		std::copy(init.begin(), init.end(), data_);
 	}
-	Vector(const iterator<T>& fst, const iterator<T>& lst) : Buffer<T>(fst - lst) {
-		std::copy(fst, lst, data_);
-		size_ = fst - lst;
+	template <typename InputIt>
+	Vector(const InputIt& first, const InputIt& last) : Buffer<T>(last - first) {
+		std::copy(first, last, data_);
+		size_ = last - first;
 	}
 	~Vector() = default;
 
