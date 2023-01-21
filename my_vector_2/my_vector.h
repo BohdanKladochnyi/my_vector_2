@@ -43,33 +43,35 @@ protected:
 
 template<typename T> class Buffer {
 protected:
-	size_t size_ = 0, capacity_ = 0;
-	T* data_ = nullptr;
+	T* data_;
+	size_t capacity_, size_ = 0;
+
+	Buffer(size_t count = 0)
+		: data_((count == 0) ? nullptr
+			: static_cast<T*>(::operator new(sizeof(T) * count))),
+		capacity_(count) {}
+
 
 	Buffer(const Buffer& other) = delete;
 	Buffer& operator=(const Buffer& other) = delete;
 
-	Buffer(size_t count = 0)
-		: capacity_(count), data_((count == 0) ? nullptr
-			: static_cast<T*>(::operator new(sizeof(T) * count))) {}
-
 	Buffer(Buffer&& other) noexcept 
-		: size_(other.size_), capacity_(other.capacity_), data_(other.data_) {
-		other.size_ = 0;
-		other.capacity_ = 0;
+		: data_(other.data_), capacity_(other.capacity_), size_(other.size_) {
 		other.data_ = nullptr;
+		other.capacity_ = 0;
+		other.size_ = 0;
 	}
 	Buffer& operator=(Buffer&& other) noexcept {
-		std::swap(size_, other.size_);
-		std::swap(capacity_, other.capacity_);
 		std::swap(data_, other.data_);
+		std::swap(capacity_, other.capacity_);
+		std::swap(size_, other.size_);
 		return *this;
 	}
 
 	~Buffer() {
 		for (size_t i = 0; i < size_; ++i)
 			data_[i].~T();
-		::operator delete(data);
+		::operator delete(data_);
 	}
 };
 
