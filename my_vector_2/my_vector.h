@@ -78,17 +78,27 @@ protected:
 template <typename> class iterator;
 
 template<typename T> class Vector final : private Buffer<T> {
-	using Buffer<T>::size_;
-	using Buffer<T>::capacity_;
 	using Buffer<T>::data_;
+	using Buffer<T>::capacity_;
+	using Buffer<T>::size_;
 public:
-	Vector() = default;
-	Vector(const Vector& other) = default;
-	Vector& operator=(const Vector& other) = default;
+	Vector(const Vector& other) : Buffer<T>(other.size_) {
+		while (size_ < other.size_) {
+			new (data_ + size_) T(other.data_[size_]);
+			size_ += 1;
+		}
+	}
+	Vector& operator=(const Vector& other) {
+		Vector tmp(other);
+		std::swap(*this, tmp);
+		return *this;
+	}
+
 	Vector(Vector&& other) = default;
 	Vector& operator=(Vector&& other) = default;
 
-	Vector(size_t count) : Buffer<T>(count) {}
+	explicit Vector(size_t count = 0) : Buffer<T>(count) {}
+
 	Vector(size_t count, const T& value) : Buffer<T>(count) {
 		assign(count, value);
 	}
@@ -119,9 +129,13 @@ public: //element access
 	}
 
 	T& back() {
+		if (size_ < 1)
+			throw std::runtime_error("Vector is empty");
 		return data_[size_ - 1];
 	}
 	const T& back() const {
+		if (size_ < 1)
+			throw std::runtime_error("Vector is empty");
 		return data_[size_ - 1];
 	}
 
@@ -191,7 +205,10 @@ public: //modifiers
 
 	}
 	void pop_back() {
+		if (size_ < 1)
+			throw std::runtime_error("Vector is empty");
 		--size_;
+		(data_ + size_)->~T();
 	}
 
 public:
