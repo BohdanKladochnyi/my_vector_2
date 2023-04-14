@@ -2,15 +2,14 @@
 
 namespace containers {
 
-#if 0
+
 template<typename T> class Buffer {
 protected:
 	size_t size_ = 0, capacity_ = 0;
 	T* data_ = nullptr;
 
 	Buffer() = default;
-	Buffer(size_t count)
-		: capacity_(count), data_() {}
+	Buffer(size_t count) : capacity_(count), data_(new T[capacity_]) {}
 	Buffer(const Buffer& other)
 		: size_(other.size_), capacity_(other.capacity_), data_(new T[capacity_]) {
 		std::copy(other.data_, other.data_ + capacity_, data_);
@@ -30,7 +29,7 @@ protected:
 		return *this;
 	}
 	Buffer& operator=(Buffer&& other) noexcept {
-		//if (this == &other) return *this; useless in move aasigment
+		if (this == &other) return *this;
 		std::swap(size_, other.size_);
 		std::swap(capacity_, other.capacity_);
 		std::swap(data_, other.data_);
@@ -38,39 +37,6 @@ protected:
 	}
 	
 	~Buffer() { delete[] data_; }
-};
-#endif
-
-template<typename T> class Buffer {
-protected:
-	size_t size_ = 0, capacity_ = 0;
-	T* data_ = nullptr;
-
-	Buffer(const Buffer& other) = delete;
-	Buffer& operator=(const Buffer& other) = delete;
-
-	Buffer(size_t count = 0)
-		: capacity_(count), data_((count == 0) ? nullptr
-			: static_cast<T*>(::operator new(sizeof(T) * count))) {}
-
-	Buffer(Buffer&& other) noexcept 
-		: size_(other.size_), capacity_(other.capacity_), data_(other.data_) {
-		other.size_ = 0;
-		other.capacity_ = 0;
-		other.data_ = nullptr;
-	}
-	Buffer& operator=(Buffer&& other) noexcept {
-		std::swap(size_, other.size_);
-		std::swap(capacity_, other.capacity_);
-		std::swap(data_, other.data_);
-		return *this;
-	}
-
-	~Buffer() {
-		for (size_t i = 0; i < size_; ++i)
-			data_[i].~T();
-		::operator delete(data);
-	}
 };
 
 template <typename> class iterator;
