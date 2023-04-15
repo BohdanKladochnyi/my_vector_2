@@ -3,40 +3,47 @@
 namespace containers {
 
 
+template <typename T>
+void destroy(T* p) {
+	p->~T();
+}
+
+template <typename FwdIt>
+void destroy(FwdIt first, FwdIt last) {
+	while (first != last) {
+		destroy(&*first);
+		first += 1;
+	}
+}
+
 template<typename T> class Buffer {
 protected:
-	size_t size_ = 0, capacity_ = 0;
-	T* data_ = nullptr;
+	T* data_;
+	size_t size_, used_ = 0;
 
-	Buffer() = default;
-	Buffer(size_t count) : capacity_(count), data_(new T[capacity_]) {}
-	Buffer(const Buffer& other)
-		: size_(other.size_), capacity_(other.capacity_), data_(new T[capacity_]) {
-		std::copy(other.data_, other.data_ + capacity_, data_);
-	}
-	Buffer(Buffer&& other) noexcept {
-		std::swap(size_, other.size_);
-		std::swap(capacity_, other.capacity_);
-		std::swap(data_, other.data_);
-	}
-	Buffer& operator=(const Buffer& other) {
-		if (this == &other) return *this;
-		delete[] data_;
-		size_ = other.capacity_;
-		capacity_ = other.capacity_;
-		data_ = new T[capacity_];
-		std::copy(other.data_, other.data_ + capacity_, data_);
-		return *this;
+	Buffer(const Buffer&) = delete;
+	Buffer& operator=(const Buffer& other) = delete;
+
+	Buffer(size_t size = 0)
+		: data_((size == 0) ? nullptr : static_cast<T*>(::operator new(sizeof(T) * size))), size_(size) {}
+	
+	Buffer(Buffer&& other) noexcept
+		: data_((other.data_), size_(other.size_), used_(other.used_) {
+		other.data_ = nullptr;
+		other.size_ = 0;
+		other.used_ = 0;
 	}
 	Buffer& operator=(Buffer&& other) noexcept {
-		if (this == &other) return *this;
-		std::swap(size_, other.size_);
-		std::swap(capacity_, other.capacity_);
 		std::swap(data_, other.data_);
+		std::swap(size_, other.size_);
+		std::swap(used_, other.used_);
 		return *this;
 	}
 	
-	~Buffer() { delete[] data_; }
+	~Buffer() {
+		destroy(data_, data_ + used_);
+		::operator delete(data_);
+	}
 };
 
 template <typename> class iterator;
