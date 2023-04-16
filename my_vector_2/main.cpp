@@ -2,6 +2,7 @@
 #include <cassert>
 #include "my_vector.h"
 
+#if 0
 template <typename T>
 std::ostream& dump(std::ostream& os, const containers::Vector<T>& v)
 {
@@ -20,9 +21,14 @@ struct Buf {
 	Buf& operator=(const Buf& rhs) { std::cout << "copy assigment\n"; x = rhs.x; return *this; };
 	Buf& operator=(Buf&& rhs) noexcept { std::cout << "move assigment\n"; x = rhs.x; return *this; };
 };
-
-int main()
-{
+#endif
+int main() {
+	using namespace containers;
+	Vector<int> v0;
+	Vector<int> v1(42);
+	Vector<int> v2(v1);
+	v0 = v2;
+#if 0
 	containers::Vector<int> v1;
 	containers::Vector<int> v2(v1);
 	v2 = v1;
@@ -88,4 +94,5 @@ int main()
 	containers::Vector v8rm = std::move(v7);
 	v7 = std::move(v8rm);
 	dump(std::cout, v7);
+#endif
 }

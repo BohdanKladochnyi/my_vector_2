@@ -16,6 +16,11 @@ void destroy(FwdIt first, FwdIt last) {
 	}
 }
 
+template <typename T1, typename T2>
+void construct(T1* p, const T2& elem) {
+	new (p) T2(elem);
+}
+
 template<typename T> class Buffer {
 protected:
 	T* data_;
@@ -28,7 +33,7 @@ protected:
 		: data_((size == 0) ? nullptr : static_cast<T*>(::operator new(sizeof(T) * size))), size_(size) {}
 	
 	Buffer(Buffer&& other) noexcept
-		: data_((other.data_), size_(other.size_), used_(other.used_) {
+		: data_(other.data_), size_(other.size_), used_(other.used_) {
 		other.data_ = nullptr;
 		other.size_ = 0;
 		other.used_ = 0;
@@ -39,30 +44,46 @@ protected:
 		std::swap(used_, other.used_);
 		return *this;
 	}
-	
 	~Buffer() {
 		destroy(data_, data_ + used_);
 		::operator delete(data_);
 	}
+
+	void Swap(Buffer& other) noexcept {
+		std::swap(data_, other.data_);
+		std::swap(size_, other.size_);
+		std::swap(used_, other.used_);
+	}
 };
 
 template <typename> class iterator;
-
 template<typename T> class Vector final : private Buffer<T> {
-	using Buffer<T>::size_;
-	using Buffer<T>::capacity_;
 	using Buffer<T>::data_;
+	using Buffer<T>::size_;
+	using Buffer<T>::used_;
+	using Buffer<T>::Swap;
 public:
-	Vector() = default;
-	Vector(const Vector& other) = default;
-	Vector& operator=(const Vector& other) = default;
-	Vector(Vector&& other) = default;
-	Vector& operator=(Vector&& other) = default;
+	Vector(size_t size = 0) : Buffer<T>(size) {}
+	~Vector() = default;
 
-	Vector(size_t count) : Buffer<T>(count) {}
+	Vector(const Vector& other) : Buffer<T>(other.used_) {
+		while (used_ != other.used_) {
+			construct(data_ + used_, other.data_[used_]);
+			used_ += 1;
+		}
+	}
+	Vector& operator=(const Vector& other) {
+		Vector new_vec(other);
+		Swap(new_vec);
+		return *this;
+	}
+
+#if 0
+
 	Vector(size_t count, const T& value) : Buffer<T>(count) {
 		assign(count, value);
 	}
+
 	Vector(std::initializer_list<T> init) : Buffer<T>(init.size()) {
 		size_ = init.size();
 		std::copy(init.begin(), init.end(), data_);
@@ -105,7 +126,7 @@ public: //element access
 
 public: //capacity
 	size_t capacity() const {
-		return capacity_;
+		return used_;
 	}
 	size_t size() const {
 		return size_;
@@ -114,25 +135,25 @@ public: //capacity
 		return !size;
 	}
 	void reserve(size_t count) {
-		if (capacity_ > count || !count) return;
+		if (used_ > count || !count) return;
 		T* tmp_buf = new T[count];
 		std::copy(data_, data_ + size_, tmp_buf);
 		delete[] data_;
-		capacity_ = count;
+		used_ = count;
 		data_ = tmp_buf;
 	}
 	void shrink_to_fit() {
-		if (size_ == capacity_) return;
+		if (size_ == used_) return;
 		T* tmp_buf = new T[size_];
 		std::copy(data_, data_ + size_, tmp_buf);
 		delete[] data_;
-		capacity_ = size_;
+		used_ = size_;
 		data_ = tmp_buf;
 	}
 
 public: //modifiers
 	void assign(size_t count, const T& value) {
-		if (count > capacity_) reserve(count);
+		if (count > used_) reserve(count);
 		size_ = size_ > count ? size_ : count;
 		for (size_t i = 0; i != count; ++i)
 			data_[i] = value;
@@ -145,8 +166,8 @@ public: //modifiers
 	}
 	template <typename Arg>
 	void emplace_back(Arg&& arg) {
-		if (capacity_ < 4) reserve(4);
-		if (size_ >= capacity_) reserve(capacity_ * 2);
+		if (used_ < 4) reserve(4);
+		if (size_ >= used_) reserve(used_ * 2);
 		new (data_ + size_) T(std::forward<Arg>(arg));
 		++size_;
 	}
@@ -251,8 +272,9 @@ public:
 	std::ptrdiff_t difference(const iterator& other) const {
 		return ptr_ - other.ptr_;
 	}
+#endif
 };
-
+#if 0
 template<typename T>
 bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
 {
@@ -311,5 +333,5 @@ std::ptrdiff_t operator-(const iterator<T>& lhs, const iterator<T>& rhs)
 {
 	return lhs.difference(rhs);
 }
-
+#endif
 }
