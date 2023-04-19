@@ -57,14 +57,19 @@ protected:
 };
 
 template <typename> class iterator;
-template<typename T> class Vector final : private Buffer<T> {
+
+template<typename T>
+class Vector final : private Buffer<T> {
 	using Buffer<T>::data_;
 	using Buffer<T>::size_;
 	using Buffer<T>::used_;
 	using Buffer<T>::Swap;
 public:
-	Vector(size_t size = 0) : Buffer<T>(size) {}
+	Vector(Vector&&) = default;
+	Vector& operator=(Vector&&) = default;
 	~Vector() = default;
+
+	explicit Vector(size_t size = 0) : Buffer<T>(size) {}
 
 	Vector(const Vector& other) : Buffer<T>(other.used_) {
 		while (used_ != other.used_) {
@@ -76,6 +81,42 @@ public:
 		Vector new_vec(other);
 		Swap(new_vec);
 		return *this;
+	}
+
+
+
+public: //element access
+	T& back() {
+		if (empty())
+			throw std::runtime_error("Vector is empty");
+		return data_[used_ - 1];
+	}
+	const T& back() const {
+		if (empty())
+			throw std::runtime_error("Vector is empty");
+		return data_[used_ - 1];
+	}
+
+	T& front() {
+		if (empty())
+			throw std::runtime_error("Vector is empty");
+		return data_[0];
+	}
+	const T& front() const {
+		if (empty())
+			throw std::runtime_error("Vector is empty");
+		return data_[0];
+	}
+
+public: //capacity
+	size_t capacity() const {
+		return used_;
+	}
+	size_t size() const {
+		return size_;
+	}
+	bool empty() const {
+		return (used_ == 0);
 	}
 
 #if 0
@@ -103,20 +144,6 @@ public: //element access
 		return data_[pos];
 	}
 
-	T& front() {
-		return data_[0];
-	}
-	const T& front() const {
-		return data_[0];
-	}
-
-	T& back() {
-		return data_[size_ - 1];
-	}
-	const T& back() const {
-		return data_[size_ - 1];
-	}
-
 	T* data() {
 		return data_;
 	}
@@ -125,15 +152,6 @@ public: //element access
 	}
 
 public: //capacity
-	size_t capacity() const {
-		return used_;
-	}
-	size_t size() const {
-		return size_;
-	}
-	bool empty() const {
-		return !size;
-	}
 	void reserve(size_t count) {
 		if (used_ > count || !count) return;
 		T* tmp_buf = new T[count];
