@@ -17,6 +17,14 @@ TEST(VectorCtorTest, CopyCtor) {
 
 TEST(VectorElementAccessTest, PushBack) {
 	containers::Vector<int> v;
-	//v.push_back(1);
+	v.push_back(-1);
+	EXPECT_EQ(v.back(), -1);
 
+	v.push_back(1);
+	EXPECT_EQ(v.back(), 1);
+
+	v.push_back(2);
+	EXPECT_EQ(v.back(), 2);
+
+	EXPECT_EQ(v.size(), 3);
 }

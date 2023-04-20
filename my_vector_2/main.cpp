@@ -23,11 +23,10 @@ struct Buf {
 };
 #endif
 int main() {
-	using namespace containers;
-	Vector<int> v0;
-	Vector<int> v1(42);
-	Vector<int> v2(v1);
-	v0 = v2;
+	containers::Vector<int> v;
+	
+
+
 #if 0
 	containers::Vector<int> v1;
 	containers::Vector<int> v2(v1);

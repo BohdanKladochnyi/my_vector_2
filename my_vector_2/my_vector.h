@@ -48,12 +48,6 @@ protected:
 		destroy(data_, data_ + used_);
 		::operator delete(data_);
 	}
-
-	void Swap(Buffer& other) noexcept {
-		std::swap(data_, other.data_);
-		std::swap(size_, other.size_);
-		std::swap(used_, other.used_);
-	}
 };
 
 template <typename> class iterator;
@@ -63,7 +57,6 @@ class Vector final : private Buffer<T> {
 	using Buffer<T>::data_;
 	using Buffer<T>::size_;
 	using Buffer<T>::used_;
-	using Buffer<T>::Swap;
 public:
 	Vector(Vector&&) = default;
 	Vector& operator=(Vector&&) = default;
@@ -79,7 +72,7 @@ public:
 	}
 	Vector& operator=(const Vector& other) {
 		Vector new_vec(other);
-		Swap(new_vec);
+		std::swap(*this, new_vec);
 		return *this;
 	}
 
@@ -109,16 +102,30 @@ public: //element access
 	}
 
 public: //capacity
-	size_t capacity() const {
+	size_t size() const {
 		return used_;
 	}
-	size_t size() const {
+	size_t capacity() const {
 		return size_;
 	}
 	bool empty() const {
 		return (used_ == 0);
 	}
 
+public: //modifiers
+	void push_back(const T& value) {
+		if (used_ == size_) {
+			Vector new_vec(size_ * 2 + 1);
+			while (new_vec.used_ < used_) {
+				new_vec.push_back(data_[new_vec.used_]);
+			}
+			new_vec.push_back(value);
+			std::swap(*this, new_vec);
+		} else {
+			construct(data_ + used_, value);
+			used_ += 1;
+		}
+	}
 #if 0
 
 	Vector(size_t count, const T& value) : Buffer<T>(count) {
