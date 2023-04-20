@@ -126,6 +126,13 @@ public: //modifiers
 			used_ += 1;
 		}
 	}
+
+	void pop_back() {
+		if (empty())
+			throw std::runtime_error("Vector is empty");
+		used_ -= 1;
+		destroy(data_ + used_);
+	}
 #if 0
 
 	Vector(size_t count, const T& value) : Buffer<T>(count) {
@@ -207,9 +214,7 @@ public: //modifiers
 		return  data_ + pos_;
 
 	}
-	void pop_back() {
-		--size_;
-	}
+
 
 public:
 	bool equal(const Vector& other) const {

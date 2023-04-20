@@ -28,3 +28,12 @@ TEST(VectorElementAccessTest, PushBack) {
 
 	EXPECT_EQ(v.size(), 3);
 }
+
+TEST(VectorElementAccessTest, TopPopBack) {
+	containers::Vector<int> v;
+	EXPECT_ANY_THROW(v.pop_back());
+	v.push_back(1);
+	EXPECT_EQ(v.back(), 1);
+	v.pop_back();
+	EXPECT_TRUE(v.empty());
+}
